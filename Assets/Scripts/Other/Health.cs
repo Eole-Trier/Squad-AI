@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Health
+public class Health : MonoBehaviour
 {
     [SerializeField] private int maxHp = 100;
     public int MaxHp() { return maxHp; }

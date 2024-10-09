@@ -42,7 +42,7 @@ namespace FSMMono
             //NavMeshAgentInst.updatePosition = false;
         }
 
-        private void Start()
+        private new void Start()
         {
         }
 

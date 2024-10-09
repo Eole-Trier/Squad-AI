@@ -51,7 +51,7 @@ public class PlayerAgent : Agent
     }
 
     #region MonoBehaviour Methods
-    void Start()
+    private new void Start()
     {
         base.Start();
     }

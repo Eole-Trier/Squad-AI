@@ -6,10 +6,16 @@ namespace FSMMono
 {
     public class AIAgent : Agent
     {
+        private FSM _brain;
+        private PlayerAgent _player;
+        private Role _role = Role.ASSAILANT;
+        private RoleDataPercentages _roleDataPercentages;
+
 
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
 
+        [SerializeField] float followPlayerDistance;
         private void SetMaterial(Color col)
         {
             MaterialInst.color = col;
@@ -20,6 +26,21 @@ namespace FSMMono
         public void SetYellowMaterial() { SetMaterial(Color.yellow); }
 
         public Transform Target;
+
+
+        private struct RoleDataPercentages
+        {
+            public float Defend;
+            public float Attack;
+            public float Heal;
+        }
+
+        private enum Role
+        {
+            ASSAILANT,
+            HEALER,
+            TANK
+        }
 
         #region MonoBehaviour
 
@@ -40,20 +61,61 @@ namespace FSMMono
             Target = Transform.FindAnyObjectByType<PlayerAgent>().transform;
 
             //NavMeshAgentInst.updatePosition = false;
+            _player = FindObjectOfType<PlayerAgent>();
+            _brain = new FSM();
+            _brain.SetState(FollowPlayer);
+            switch (_role)
+            {
+                case Role.ASSAILANT:
+
+                    break;
+                case Role.HEALER:
+                    break;
+                case Role.TANK:
+                    break;
+                default:
+                    break;
+            }
         }
 
-        private void Start()
+        private void Update()
         {
+            _brain.Update();
         }
 
-        #endregion
+        private void FollowPlayer()
+        {
+            
+        }
 
-        #region Perception methods
+        private void FireSupport()
+        {
 
-        #endregion
+        }
 
-        #region MoveMethods
-        public void StopMove()
+        private void ProtectPlayer()
+        {
+           
+        }
+
+        private void HealPlayer()
+        {
+          
+        }
+
+        private void CoveringFire()
+        {
+
+        }
+
+            #endregion
+
+            #region Perception methods
+
+            #endregion
+
+            #region MoveMethods
+            public void StopMove()
         {
             NavMeshAgentInst.isStopped = true;
         }

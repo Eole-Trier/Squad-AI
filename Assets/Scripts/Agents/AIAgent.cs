@@ -4,25 +4,11 @@ using UnityEngine.UI;
 
 namespace FSMMono
 {
-    public class AIAgent : MonoBehaviour, IDamageable
+    public class AIAgent : Agent
     {
 
-        [SerializeField]
-        int MaxHP = 100;
-        [SerializeField]
-        float BulletPower = 1000f;
-        [SerializeField]
-        GameObject BulletPrefab;
-
-        [SerializeField]
-        Slider HPSlider = null;
-
-        Transform GunTransform;
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
-
-        bool IsDead = false;
-        int CurrentHP;
 
         private void SetMaterial(Color col)
         {
@@ -39,7 +25,7 @@ namespace FSMMono
 
         private void Awake()
         {
-            CurrentHP = MaxHP;
+            base.Start();
 
             NavMeshAgentInst = GetComponent<NavMeshAgent>();
 
@@ -49,12 +35,7 @@ namespace FSMMono
             GunTransform = transform.Find("Body/Gun");
             if (GunTransform == null)
                 Debug.Log("could not fin gun transform");
-
-            if (HPSlider != null)
-            {
-                HPSlider.maxValue = MaxHP;
-                HPSlider.value = CurrentHP;
-            }
+            
 
             Target = Transform.FindAnyObjectByType<PlayerAgent>().transform;
 
@@ -62,15 +43,6 @@ namespace FSMMono
         }
 
         private void Start()
-        {
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-        }
-        private void OnTriggerExit(Collider other)
-        {
-        }
-        private void OnDrawGizmos()
         {
         }
 
@@ -98,21 +70,7 @@ namespace FSMMono
         #endregion
 
         #region ActionMethods
-
-        public void AddDamage(int amount)
-        {
-            CurrentHP -= amount;
-            if (CurrentHP <= 0)
-            {
-                IsDead = true;
-                CurrentHP = 0;
-            }
-
-            if (HPSlider != null)
-            {
-                HPSlider.value = CurrentHP;
-            }
-        }
+        
         void ShootToPosition(Vector3 pos)
         {
             // look at target position

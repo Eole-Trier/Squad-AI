@@ -3,29 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerAgent : MonoBehaviour, IDamageable
+public class PlayerAgent : Agent
 {
-    [SerializeField]
-    int MaxHP = 100;
-    [SerializeField]
-    float BulletPower = 1000f;
-    [SerializeField]
-    GameObject BulletPrefab;
-
     [SerializeField]
     GameObject TargetCursorPrefab = null;
     [SerializeField]
     GameObject NPCTargetCursorPrefab = null;
-
-    [SerializeField]
-    Slider HPSlider = null;
-
-    Rigidbody rb;
-    GameObject TargetCursor = null;
-    GameObject NPCTargetCursor = null;
-    Transform GunTransform;
-    bool IsDead = false;
-    int CurrentHP;
 
     private GameObject GetTargetCursor()
     {
@@ -61,19 +44,7 @@ public class PlayerAgent : MonoBehaviour, IDamageable
     {
         GetNPCTargetCursor().transform.position = pos;
     }
-    public void AddDamage(int amount)
-    {
-        CurrentHP -= amount;
-        if (CurrentHP <= 0)
-        {
-            IsDead = true;
-            CurrentHP = 0;
-        }
-        if (HPSlider != null)
-        {
-            HPSlider.value = CurrentHP;
-        }
-    }
+    
     public void MoveToward(Vector3 velocity)
     {
         rb.MovePosition(rb.position + velocity * Time.deltaTime);
@@ -82,15 +53,7 @@ public class PlayerAgent : MonoBehaviour, IDamageable
     #region MonoBehaviour Methods
     void Start()
     {
-        CurrentHP = MaxHP;
-        GunTransform = transform.Find("Gun");
-        rb = GetComponent<Rigidbody>();
-
-        if (HPSlider != null)
-        {
-            HPSlider.maxValue = MaxHP;
-            HPSlider.value = CurrentHP;
-        }
+        base.Start();
     }
     void Update()
     {

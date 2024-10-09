@@ -2,38 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurretAgent : MonoBehaviour, IDamageable
+public class TurretAgent : Agent
 {
-    [SerializeField]
-    int MaxHP = 100;
-    [SerializeField]
-    float BulletPower = 1000f;
-    [SerializeField]
-    GameObject BulletPrefab;
-
     [SerializeField]
     float ShootFrequency = 1f;
 
     float NextShootDate = 0f;
 
-    Transform GunTransform;
-
-    bool IsDead = false;
-    int CurrentHP;
-
-    GameObject Target = null;
-
-    public void AddDamage(int amount)
-    {
-        CurrentHP -= amount;
-        if (CurrentHP <= 0)
-        {
-            IsDead = true;
-            CurrentHP = 0;
-
-            gameObject.SetActive(false);
-        }
-    }
+    public GameObject Target;
+    
     void ShootToPosition(Vector3 pos)
     {
         // look at target position
@@ -49,11 +26,11 @@ public class TurretAgent : MonoBehaviour, IDamageable
     }
     void Start()
     {
+        base.Start();
+        
         GunTransform = transform.Find("Body/Gun");
         if (GunTransform == null)
             Debug.Log("could not find gun transform");
-
-        CurrentHP = MaxHP;
     }
 
     void Update()

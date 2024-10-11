@@ -10,7 +10,7 @@ public class Agent : MonoBehaviour
     [SerializeField] protected float BulletPower = 1000f;
     [SerializeField] protected GameObject BulletPrefab;
 
-    [SerializeField] protected Health healthComponent;
+    [SerializeField] public Health healthComponent;
     
     protected Rigidbody rb;
     protected GameObject TargetCursor = null;

@@ -6,15 +6,16 @@ namespace FSMMono
 {
     public class AIAgent : Agent
     {
+        [SerializeField] private AIAgentData _agentData;
+        [SerializeField] float followPlayerDistance;
+        [SerializeField] float startHealingPlayerHpPercentage;
         private float MaxPercentage = 100f;
         private FSM _brain;
         private PlayerAgent _player;
-        [SerializeField] private AIAgentData _agentData;
 
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
 
-        [SerializeField] float followPlayerDistance;
         private void SetMaterial(Color col)
         {
             MaterialInst.color = col;
@@ -72,6 +73,18 @@ namespace FSMMono
                 cumulativeChances += _agentData.CoveringFirePercentage;
                 if (rand <= cumulativeChances)
                     _brain.SetState(CoveringFire);
+            }
+            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
+            {
+                cumulativeChances += _agentData.HealPlayerPercentage;
+                if (rand <= cumulativeChances)
+                    _brain.SetState(HealPlayer);
+            }
+            if (false) // enemy shoot on the player
+            {
+                cumulativeChances += _agentData.ProtectPlayerPercentage;
+                if (rand <= cumulativeChances)
+                    _brain.SetState(ProtectPlayer);
             }
         }
 

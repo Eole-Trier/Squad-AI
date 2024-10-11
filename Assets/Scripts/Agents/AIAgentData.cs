@@ -6,13 +6,8 @@ using UnityEngine;
 
 public class AIAgentData : ScriptableObject
 {
-    public struct RoleDataPercentages
-    {
-        public float Defend;
-        public float Attack;
-        public float Heal;
-    }
-
-    public RoleDataPercentages q;
-
+    public float SupportFirePercentage;
+    public float CoveringFirePercentage;
+    public float HealPlayerPercentage;
+    public float ProtectPlayerPercentage;
 }

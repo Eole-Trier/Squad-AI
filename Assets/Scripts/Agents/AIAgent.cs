@@ -6,11 +6,10 @@ namespace FSMMono
 {
     public class AIAgent : Agent
     {
+        private float MaxPercentage = 100f;
         private FSM _brain;
         private PlayerAgent _player;
-        private Role _role = Role.ASSAILANT;
-        private RoleDataPercentages _roleDataPercentages;
-
+        [SerializeField] private AIAgentData _agentData;
 
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
@@ -26,21 +25,6 @@ namespace FSMMono
         public void SetYellowMaterial() { SetMaterial(Color.yellow); }
 
         public Transform Target;
-
-
-        private struct RoleDataPercentages
-        {
-            public float Defend;
-            public float Attack;
-            public float Heal;
-        }
-
-        private enum Role
-        {
-            ASSAILANT,
-            HEALER,
-            TANK
-        }
 
         #region MonoBehaviour
 
@@ -64,18 +48,7 @@ namespace FSMMono
             _player = FindObjectOfType<PlayerAgent>();
             _brain = new FSM();
             _brain.SetState(FollowPlayer);
-            switch (_role)
-            {
-                case Role.ASSAILANT:
-
-                    break;
-                case Role.HEALER:
-                    break;
-                case Role.TANK:
-                    break;
-                default:
-                    break;
-            }
+            
         }
 
         private void Update()
@@ -85,10 +58,24 @@ namespace FSMMono
 
         private void FollowPlayer()
         {
-            
+            float rand = Random.Range(0f, MaxPercentage);
+            float cumulativeChances = 0f;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                cumulativeChances += _agentData.SupportFirePercentage;
+                if (rand <= cumulativeChances)
+                    _brain.SetState(SupportFire);
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                cumulativeChances += _agentData.CoveringFirePercentage;
+                if (rand <= cumulativeChances)
+                    _brain.SetState(CoveringFire);
+            }
         }
 
-        private void FireSupport()
+        private void SupportFire()
         {
 
         }

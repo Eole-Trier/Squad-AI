@@ -24,7 +24,7 @@ public class TurretAgent : Agent
             rb.AddForce(transform.forward * BulletPower);
         }
     }
-    void Start()
+    private new void Start()
     {
         base.Start();
         

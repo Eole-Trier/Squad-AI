@@ -11,10 +11,10 @@ public class Bullet : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        IDamageable damagedAgent = collision.gameObject.GetComponentInParent<IDamageable>();
-        if (damagedAgent == null)
-            damagedAgent = collision.gameObject.GetComponent<IDamageable>();
-        damagedAgent?.AddDamage(1);
+        Health healthComponent = collision.gameObject.GetComponentInParent<Health>();
+        if (healthComponent == null)
+            healthComponent = collision.gameObject.GetComponent<Health>();
+        healthComponent?.AddDamage(1);
 
         Destroy(gameObject);
     }

@@ -15,7 +15,9 @@ public class Health : MonoBehaviour
     public bool IsDead() { return _isDead; }
     
     private int _currentHp;
+
     public int CurrentHp() { return _currentHp;}
+    public void SetHp(int hp) { _currentHp = hp; }
     public float GetHpPercentage() {return _currentHp/(float)maxHp; }
 
     public event Action OnDeath;

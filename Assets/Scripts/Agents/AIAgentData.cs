@@ -10,4 +10,7 @@ public class AIAgentData : ScriptableObject
     public float CoveringFirePercentage;
     public float HealPlayerPercentage;
     public float ProtectPlayerPercentage;
+
+    public int healingPoints;
+    public float damagePoints;
 }

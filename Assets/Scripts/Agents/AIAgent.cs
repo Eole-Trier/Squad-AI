@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace FSMMono
 {
@@ -14,6 +16,10 @@ namespace FSMMono
         [SerializeField]
         GameObject BulletPrefab;
 
+        //Defense Formation Setup
+        public float baseRadius = 5f;
+        public float radiusStep = 0.5f;
+
         [SerializeField]
         Slider HPSlider = null;
 
@@ -24,10 +30,15 @@ namespace FSMMono
         bool IsDead = false;
         int CurrentHP;
 
+        [SerializeField] List<GameObject> units = new();
+        private List<Vector3> unitsTargetPos = new();
+        private List<Quaternion> unitsTargetRot = new();
+
         private void SetMaterial(Color col)
         {
             MaterialInst.color = col;
         }
+
         public void SetWhiteMaterial() { SetMaterial(Color.white); }
         public void SetRedMaterial() { SetMaterial(Color.red); }
         public void SetBlueMaterial() { SetMaterial(Color.blue); }
@@ -64,11 +75,15 @@ namespace FSMMono
         private void Start()
         {
         }
+
         private void OnTriggerEnter(Collider other)
         {
+
         }
+
         private void OnTriggerExit(Collider other)
         {
+
         }
         private void OnDrawGizmos()
         {
@@ -95,6 +110,20 @@ namespace FSMMono
             return NavMeshAgentInst.remainingDistance - NavMeshAgentInst.stoppingDistance <= 0f;
         }
 
+        public void DefenseFormation()
+        {
+            int unitCount = units.Count;
+            float radius = baseRadius + radiusStep * unitCount;
+            float angleStep = 360f / unitCount;
+
+            
+        }
+
+        public void MoveFormation()
+        {
+            NavMeshAgentInst.SetDestination(Target.position + Vector3.forward * 5f);
+        }
+
         #endregion
 
         #region ActionMethods
@@ -113,6 +142,7 @@ namespace FSMMono
                 HPSlider.value = CurrentHP;
             }
         }
+
         void ShootToPosition(Vector3 pos)
         {
             // look at target position
@@ -129,10 +159,9 @@ namespace FSMMono
 
         Vector3 velocity = Vector3.zero;
 
-        public void FixedUpdate()
+        public void Update()
         {
-            // ugly hard coded position next to the player
-            NavMeshAgentInst.SetDestination(Target.position + Vector3.right * 5.0f);
+            NavMeshAgentInst.SetDestination(Target.position + Vector3.right);
         }
         #endregion
     }

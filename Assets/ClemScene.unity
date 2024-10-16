@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1316,6 +1315,8 @@ GameObject:
   - component: {fileID: 1298665042}
   - component: {fileID: 1298665041}
   - component: {fileID: 1298665040}
+  - component: {fileID: 1298665043}
+  - component: {fileID: 1298665044}
   m_Layer: 7
   m_Name: Body
   m_TagString: Untagged
@@ -1412,6 +1413,46 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1298665038}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!135 &1298665043
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298665038}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 4
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &1298665044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298665038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d3269a761b5341458ee2923ac0ef7aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHP: 100
+  BulletPower: 20
+  BulletPrefab: {fileID: 5401778330997243954, guid: 5ba53653fefbaec42966757ef1ac0aab,
+    type: 3}
+  HPSlider: {fileID: 1531951182}
+  isDefend: 0
+  m_AiAgentinst: {fileID: 1932553078}
 --- !u!1 &1466600411
 GameObject:
   m_ObjectHideFlags: 0
@@ -2278,8 +2319,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHP: 100
-  BulletPower: 100
-  BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
+  BulletPower: 50
+  BulletPrefab: {fileID: 5401778330997243954, guid: 5ba53653fefbaec42966757ef1ac0aab,
     type: 3}
   TargetCursorPrefab: {fileID: 1510336254582165163, guid: 7b6276c878e17d241921c647a7d9da0e,
     type: 3}
@@ -2483,8 +2524,11 @@ MonoBehaviour:
   BulletPower: 1000
   BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
+  baseRadius: 5
+  radiusStep: 0.5
   HPSlider: {fileID: 1531951182}
-  Target: {fileID: 0}
+  units: []
+  Target: {fileID: 1875079898}
 --- !u!1 &1958311447
 GameObject:
   m_ObjectHideFlags: 0
@@ -2801,6 +2845,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 49960626110534418, guid: fbbfa16ea4fee0f4c959cca386e7c165,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 49960626340365856, guid: fbbfa16ea4fee0f4c959cca386e7c165,
         type: 3}
       propertyPath: m_RootOrder
@@ -2856,6 +2905,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 49960626340365857, guid: fbbfa16ea4fee0f4c959cca386e7c165,
+        type: 3}
+      propertyPath: BulletPower
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 49960626340365858, guid: fbbfa16ea4fee0f4c959cca386e7c165,
         type: 3}
       propertyPath: m_Name
@@ -2863,8 +2917,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 49960626340365858, guid: fbbfa16ea4fee0f4c959cca386e7c165,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 49960626340365858, guid: fbbfa16ea4fee0f4c959cca386e7c165,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 49960627115765623, guid: fbbfa16ea4fee0f4c959cca386e7c165,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

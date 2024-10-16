@@ -19,7 +19,6 @@ namespace FSMMono
 
         private Vector3 offsetFromPlayer = Vector3.right * 5.0f;
 
-        NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
 
         private void SetMaterial(Color col)
@@ -248,23 +247,6 @@ namespace FSMMono
 
             #endregion
 
-            #region MoveMethods
-            public void StopMove()
-        {
-            NavMeshAgentInst.isStopped = true;
-        }
-        public void MoveTo(Vector3 dest)
-        {
-            NavMeshAgentInst.isStopped = false;
-            NavMeshAgentInst.SetDestination(dest);
-        }
-        public bool HasReachedPos(float offset = 0f)
-        {
-            return NavMeshAgentInst.remainingDistance - NavMeshAgentInst.stoppingDistance <= offset;
-        }
-       
-
-        #endregion
 
         #region ActionMethods
 

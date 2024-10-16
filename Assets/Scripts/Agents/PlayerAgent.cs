@@ -28,6 +28,17 @@ public class PlayerAgent : Agent
         if (Vector3.Distance(transform.position, pos) > 2.5f)
             transform.LookAt(pos + Vector3.up * transform.position.y);
     }
+   
+    public void NPCShootToPosition(Vector3 pos)
+    {
+        GetNPCTargetCursor().transform.position = pos;
+    }
+    
+    public void MoveToward(Vector3 velocity)
+    {
+        rb.MovePosition(rb.position + velocity * Time.deltaTime);
+    }
+
     public void ShootToPosition(Vector3 pos)
     {
         // instantiate bullet
@@ -37,15 +48,6 @@ public class PlayerAgent : Agent
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * BulletPower);
         }
-    }
-    public void NPCShootToPosition(Vector3 pos)
-    {
-        GetNPCTargetCursor().transform.position = pos;
-    }
-    
-    public void MoveToward(Vector3 velocity)
-    {
-        rb.MovePosition(rb.position + velocity * Time.deltaTime);
     }
 
     #region MonoBehaviour Methods

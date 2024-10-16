@@ -1937,6 +1937,7 @@ GameObject:
   - component: {fileID: 1875079899}
   - component: {fileID: 1875079900}
   - component: {fileID: 1875079901}
+  - component: {fileID: 1875079902}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -2085,11 +2086,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aabe4fab0c81e74e97c00ca4ec9725f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHP: 100
   BulletPower: 100
   BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
-  HPSlider: {fileID: 1549369261}
+  healthComponent: {fileID: 0}
+  NavMeshAgentInst: {fileID: 0}
+--- !u!114 &1875079902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875079894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0267bd5c4d75447bb602839d55c5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 100
+  hpSlider: {fileID: 0}
 --- !u!1 &1919374326
 GameObject:
   m_ObjectHideFlags: 0
@@ -2595,6 +2610,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 930580290200524866, guid: fbbfa16ea4fee0f4c959cca386e7c165,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

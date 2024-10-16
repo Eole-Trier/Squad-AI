@@ -4,25 +4,23 @@ using UnityEngine.UI;
 
 namespace FSMMono
 {
-    public class AIAgent : MonoBehaviour, IDamageable
+    public class AIAgent : Agent
     {
+        [SerializeField] AIAgentData _agentData;
+        [SerializeField] float followPlayerDistance;
+        [SerializeField] float startHealingPlayerHpPercentage;
+        [SerializeField] float distanceToHealPlayer;
+        private float MaxPercentage = 100f;
+        private FSM _brain;
+        private PlayerAgent _player;
 
-        [SerializeField]
-        int MaxHP = 100;
-        [SerializeField]
-        float BulletPower = 1000f;
-        [SerializeField]
-        GameObject BulletPrefab;
+        private float rand = 0f;
+        private float cumulativeChances = 0f;
 
-        [SerializeField]
-        Slider HPSlider = null;
+        private Vector3 offsetFromPlayer = Vector3.right * 5.0f;
 
-        Transform GunTransform;
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
-
-        bool IsDead = false;
-        int CurrentHP;
 
         private void SetMaterial(Color col)
         {
@@ -39,7 +37,7 @@ namespace FSMMono
 
         private void Awake()
         {
-            CurrentHP = MaxHP;
+            base.Start();
 
             NavMeshAgentInst = GetComponent<NavMeshAgent>();
 
@@ -49,39 +47,209 @@ namespace FSMMono
             GunTransform = transform.Find("Body/Gun");
             if (GunTransform == null)
                 Debug.Log("could not fin gun transform");
-
-            if (HPSlider != null)
-            {
-                HPSlider.maxValue = MaxHP;
-                HPSlider.value = CurrentHP;
-            }
+            
 
             Target = Transform.FindAnyObjectByType<PlayerAgent>().transform;
 
             //NavMeshAgentInst.updatePosition = false;
+            _player = FindObjectOfType<PlayerAgent>();
+            _brain = new FSM();
+            _brain.SetState(FollowPlayer);
+            
         }
 
-        private void Start()
+        private void Update()
         {
+            rand = Random.Range(0f, MaxPercentage);
+            cumulativeChances = 0f;
+            _brain.Update();
         }
-        private void OnTriggerEnter(Collider other)
+
+        private void FollowPlayer()
         {
+            RunToPlayer(offsetFromPlayer);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                cumulativeChances += _agentData.SupportFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(SupportFire);
+                    return;
+                }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                cumulativeChances += _agentData.CoveringFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(CoveringFire);
+                    return;
+                }
+            }
+            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
+            {
+                cumulativeChances += _agentData.HealPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(HealPlayer);
+                    return;
+                }
+            }
+            if (false) // enemy shoot on the player
+            {
+                cumulativeChances += _agentData.ProtectPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(ProtectPlayer);
+                    return;
+                }
+            }
         }
-        private void OnTriggerExit(Collider other)
+
+        private void SupportFire()
         {
+            if (Input.GetMouseButtonDown(1))
+            {
+                cumulativeChances += _agentData.CoveringFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(CoveringFire);
+                    return;
+                }
+            }
+            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
+            {
+                cumulativeChances += _agentData.HealPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(HealPlayer);
+                    return;
+                }
+            }
+            if (false) // enemy shoot on the player
+            {
+                cumulativeChances += _agentData.ProtectPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(ProtectPlayer);
+                    return;
+                }
+            }
+            _brain.SetState(FollowPlayer);
         }
-        private void OnDrawGizmos()
+
+        private void ProtectPlayer()
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                cumulativeChances += _agentData.SupportFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(SupportFire);
+                    return;
+                }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                cumulativeChances += _agentData.CoveringFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(CoveringFire);
+                    return;
+                }
+            }
+            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
+            {
+                cumulativeChances += _agentData.HealPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(HealPlayer);
+                    return;
+                }
+            }
+            _brain.SetState(FollowPlayer);
         }
 
-        #endregion
+        private void HealPlayer()
+        {
+            RunToPlayer(Vector3.zero);
 
-        #region Perception methods
+            if (!HasReachedPos(distanceToHealPlayer))
+                return;
+            
+            _player.healthComponent.SetHp(_player.healthComponent.CurrentHp() + _agentData.healingPoints);
 
-        #endregion
+            if (Input.GetMouseButtonDown(0))
+            {
+                cumulativeChances += _agentData.SupportFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(SupportFire);
+                    return;
+                }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                cumulativeChances += _agentData.CoveringFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(CoveringFire);
+                    return;
+                }
+            }
+            if (false) // enemy shoot on the player
+            {
+                cumulativeChances += _agentData.ProtectPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(ProtectPlayer);
+                    return;
+                }
+            }
+            _brain.SetState(FollowPlayer);
+        }
 
-        #region MoveMethods
-        public void StopMove()
+        private void CoveringFire()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                cumulativeChances += _agentData.SupportFirePercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(SupportFire);
+                    return;
+                }
+            }
+            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
+            {
+                cumulativeChances += _agentData.HealPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(HealPlayer);
+                    return;
+                }
+            }
+            if (false) // enemy shoot on the player
+            {
+                cumulativeChances += _agentData.ProtectPlayerPercentage;
+                if (rand <= cumulativeChances)
+                {
+                    _brain.SetState(ProtectPlayer);
+                    return;
+                }
+            }
+            _brain.SetState(FollowPlayer);
+        }
+
+            #endregion
+
+            #region Perception methods
+
+            #endregion
+
+            #region MoveMethods
+            public void StopMove()
         {
             NavMeshAgentInst.isStopped = true;
         }
@@ -90,29 +258,16 @@ namespace FSMMono
             NavMeshAgentInst.isStopped = false;
             NavMeshAgentInst.SetDestination(dest);
         }
-        public bool HasReachedPos()
+        public bool HasReachedPos(float offset = 0f)
         {
-            return NavMeshAgentInst.remainingDistance - NavMeshAgentInst.stoppingDistance <= 0f;
+            return NavMeshAgentInst.remainingDistance - NavMeshAgentInst.stoppingDistance <= offset;
         }
+       
 
         #endregion
 
         #region ActionMethods
 
-        public void AddDamage(int amount)
-        {
-            CurrentHP -= amount;
-            if (CurrentHP <= 0)
-            {
-                IsDead = true;
-                CurrentHP = 0;
-            }
-
-            if (HPSlider != null)
-            {
-                HPSlider.value = CurrentHP;
-            }
-        }
         void ShootToPosition(Vector3 pos)
         {
             // look at target position
@@ -127,13 +282,13 @@ namespace FSMMono
             }
         }
 
+        void RunToPlayer(Vector3 offset)
+        {
+            NavMeshAgentInst.SetDestination(Target.position + offset);
+        }
+
         Vector3 velocity = Vector3.zero;
 
-        public void FixedUpdate()
-        {
-            // ugly hard coded position next to the player
-            NavMeshAgentInst.SetDestination(Target.position + Vector3.right * 5.0f);
-        }
         #endregion
     }
 }

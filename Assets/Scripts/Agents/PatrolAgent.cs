@@ -12,7 +12,7 @@ public class PatrolAgent : Agent
     private int _pathIndex;
     float NextShootDate = 0f;
 
-    public GameObject Target;
+    private GameObject _target;
 
     void ShootToPosition(Vector3 pos)
     {
@@ -35,22 +35,23 @@ public class PatrolAgent : Agent
         if (GunTransform == null)
             Debug.Log("could not find gun transform");
 
+        _brain = new FSM();
         _brain.SetState(Idle);
     }
 
     void Update()
     {
-        if (Target && Time.time >= NextShootDate)
+        if (_target && Time.time >= NextShootDate)
         {
             NextShootDate = Time.time + _shootFrequency;
-            ShootToPosition(Target.transform.position);
+            ShootToPosition(_target.transform.position);
         }
+        _brain.Update();
     }
 
     private void Idle()
     {
         StopMove();
-        Target = null;
         _idleWaitTime += Time.deltaTime;
 
         if (_idleWaitTime >= 2f)
@@ -58,7 +59,7 @@ public class PatrolAgent : Agent
             _idleWaitTime = 0;
             _brain.SetState(Patrol);
         }
-        if (Target)
+        if (_target)
         {
             _idleWaitTime = 0;
             _brain.SetState(Chase);
@@ -73,7 +74,7 @@ public class PatrolAgent : Agent
             StopMove();
             _pathIndex = (_pathIndex + 1) % pathGo.Count;
         }
-        if (Target)
+        if (_target)
         {
             _idleWaitTime = 0;
             _brain.SetState(Chase);
@@ -83,7 +84,7 @@ public class PatrolAgent : Agent
     private void Chase()
     {
         MoveToTarget();
-        if (!Target)
+        if (!_target)
         {
             _brain.SetState(Idle);
         }
@@ -91,25 +92,25 @@ public class PatrolAgent : Agent
 
     public void MoveToTarget()
     {
-        if (Target == null)
+        if (_target == null)
             return;
-        Vector3 targetPos = Target.transform.position;
+        Vector3 targetPos = _target.transform.position;
         targetPos.y = 0f;
         MoveTo(targetPos);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (Target == null && other.gameObject.layer == LayerMask.NameToLayer("Allies"))
+        if (_target == null && other.gameObject.layer == LayerMask.NameToLayer("Allies"))
         {
-            Target = other.gameObject;
+            _target = other.gameObject;
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (Target != null && other.gameObject == Target)
+        if (_target != null && other.gameObject == _target)
         {
-            Target = null;
+            _target = null;
         }
     }
 }

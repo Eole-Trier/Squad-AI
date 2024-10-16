@@ -24,6 +24,7 @@ public class Agent : MonoBehaviour
     {
         GunTransform = transform.Find("Gun");
         rb = GetComponent<Rigidbody>();
+        NavMeshAgentInst = GetComponent<NavMeshAgent>();
     }
 
     public void StopMove()
@@ -37,6 +38,13 @@ public class Agent : MonoBehaviour
     }
     public bool HasReachedPos(float offset = 0f)
     {
-        return NavMeshAgentInst.remainingDistance - NavMeshAgentInst.stoppingDistance <= offset;
+        if (Vector3.Distance(NavMeshAgentInst.destination, NavMeshAgentInst.transform.position) <= NavMeshAgentInst.stoppingDistance)
+        {
+            if (!NavMeshAgentInst.hasPath || NavMeshAgentInst.velocity.sqrMagnitude == 0f)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

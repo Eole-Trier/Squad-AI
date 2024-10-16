@@ -149,6 +149,14 @@ MonoBehaviour:
   BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
   healthComponent: {fileID: 8718135765491866994}
+  _agentData: {fileID: 11400000, guid: 0621b26193d5fac418618a97b199b558, type: 2}
+  followPlayerDistance: 0
+  startHealingPlayerHpPercentage: 0
+  distanceToHealPlayer: 0
+  baseRadius: 5
+  radiusStep: 0.5
+  HPSlider: {fileID: 0}
+  units: []
   Target: {fileID: 0}
 --- !u!195 &7193151420083898389
 NavMeshAgent:

@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace FSMMono
 {
@@ -17,14 +19,28 @@ namespace FSMMono
         private float rand = 0f;
         private float cumulativeChances = 0f;
 
+        //Defense Formation Setup
+        public float baseRadius = 5f;
+        public float radiusStep = 0.5f;
+
+        [SerializeField]
+        Slider HPSlider = null;
         private Vector3 offsetFromPlayer = Vector3.right * 5.0f;
 
         Material MaterialInst;
+
+        bool IsDead = false;
+        int CurrentHP;
+
+        [SerializeField] List<GameObject> units = new();
+        private List<Vector3> unitsTargetPos = new();
+        private List<Quaternion> unitsTargetRot = new();
 
         private void SetMaterial(Color col)
         {
             MaterialInst.color = col;
         }
+
         public void SetWhiteMaterial() { SetMaterial(Color.white); }
         public void SetRedMaterial() { SetMaterial(Color.red); }
         public void SetBlueMaterial() { SetMaterial(Color.blue); }
@@ -46,7 +62,7 @@ namespace FSMMono
             GunTransform = transform.Find("Body/Gun");
             if (GunTransform == null)
                 Debug.Log("could not fin gun transform");
-            
+
 
             Target = Transform.FindAnyObjectByType<PlayerAgent>().transform;
             _player = FindAnyObjectByType<PlayerAgent>();
@@ -133,111 +149,121 @@ namespace FSMMono
                     return;
                 }
             }
+
             _brain.SetState(FollowPlayer);
         }
-
-        private void ProtectPlayer()
+        private void OnTriggerEnter(Collider other)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                cumulativeChances += _agentData.SupportFirePercentage;
-                if (rand <= cumulativeChances)
-                {
-                    _brain.SetState(SupportFire);
-                    return;
-                }
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                cumulativeChances += _agentData.CoveringFirePercentage;
-                if (rand <= cumulativeChances)
-                {
-                    _brain.SetState(CoveringFire);
-                    return;
-                }
-            }
-            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
-            {
-                cumulativeChances += _agentData.HealPlayerPercentage;
-                if (rand <= cumulativeChances)
-                {
-                    _brain.SetState(HealPlayer);
-                    return;
-                }
-            }
-            _brain.SetState(FollowPlayer);
+
         }
 
-        private void HealPlayer()
+        private void OnTriggerExit(Collider other)
         {
-            RunToPlayer(Vector3.zero);
+
+        }
+
+            private void ProtectPlayer()
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    cumulativeChances += _agentData.SupportFirePercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(SupportFire);
+                        return;
+                    }
+                }
+                if (Input.GetMouseButtonDown(1))
+                {
+                    cumulativeChances += _agentData.CoveringFirePercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(CoveringFire);
+                        return;
+                    }
+                }
+                if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
+                {
+                    cumulativeChances += _agentData.HealPlayerPercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(HealPlayer);
+                        return;
+                    }
+                }
+                _brain.SetState(FollowPlayer);
+            }
+
+            private void HealPlayer()
+            {
+                RunToPlayer(Vector3.zero);
 
             if (!HasReachedPos())
                 return;
             
             _player.healthComponent.SetHp(_player.healthComponent.CurrentHp() + _agentData.healingPoints);
 
-            if (Input.GetMouseButtonDown(0))
-            {
-                cumulativeChances += _agentData.SupportFirePercentage;
-                if (rand <= cumulativeChances)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    _brain.SetState(SupportFire);
-                    return;
+                    cumulativeChances += _agentData.SupportFirePercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(SupportFire);
+                        return;
+                    }
                 }
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                cumulativeChances += _agentData.CoveringFirePercentage;
-                if (rand <= cumulativeChances)
+                if (Input.GetMouseButtonDown(1))
                 {
-                    _brain.SetState(CoveringFire);
-                    return;
+                    cumulativeChances += _agentData.CoveringFirePercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(CoveringFire);
+                        return;
+                    }
                 }
-            }
-            if (false) // enemy shoot on the player
-            {
-                cumulativeChances += _agentData.ProtectPlayerPercentage;
-                if (rand <= cumulativeChances)
+                if (false) // enemy shoot on the player
                 {
-                    _brain.SetState(ProtectPlayer);
-                    return;
+                    cumulativeChances += _agentData.ProtectPlayerPercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(ProtectPlayer);
+                        return;
+                    }
                 }
+                _brain.SetState(FollowPlayer);
             }
-            _brain.SetState(FollowPlayer);
-        }
 
-        private void CoveringFire()
-        {
-            if (Input.GetMouseButtonDown(0))
+            private void CoveringFire()
             {
-                cumulativeChances += _agentData.SupportFirePercentage;
-                if (rand <= cumulativeChances)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    _brain.SetState(SupportFire);
-                    return;
+                    cumulativeChances += _agentData.SupportFirePercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(SupportFire);
+                        return;
+                    }
                 }
-            }
-            if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
-            {
-                cumulativeChances += _agentData.HealPlayerPercentage;
-                if (rand <= cumulativeChances)
+                if (_player.healthComponent.GetHpPercentage() <= startHealingPlayerHpPercentage)
                 {
-                    _brain.SetState(HealPlayer);
-                    return;
+                    cumulativeChances += _agentData.HealPlayerPercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(HealPlayer);
+                        return;
+                    }
                 }
-            }
-            if (false) // enemy shoot on the player
-            {
-                cumulativeChances += _agentData.ProtectPlayerPercentage;
-                if (rand <= cumulativeChances)
+                if (false) // enemy shoot on the player
                 {
-                    _brain.SetState(ProtectPlayer);
-                    return;
+                    cumulativeChances += _agentData.ProtectPlayerPercentage;
+                    if (rand <= cumulativeChances)
+                    {
+                        _brain.SetState(ProtectPlayer);
+                        return;
+                    }
                 }
+                _brain.SetState(FollowPlayer);
             }
-            _brain.SetState(FollowPlayer);
-        }
 
             #endregion
 
@@ -246,29 +272,43 @@ namespace FSMMono
             #endregion
 
 
-        #region ActionMethods
+            #region ActionMethods
 
-        void ShootToPosition(Vector3 pos)
-        {
-            // look at target position
-            transform.LookAt(pos + Vector3.up * transform.position.y);
-
-            // instantiate bullet
-            if (BulletPrefab)
+            public void AddDamage(int amount)
             {
-                GameObject bullet = Instantiate<GameObject>(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
-                rb.AddForce(transform.forward * BulletPower);
+                CurrentHP -= amount;
+                if (CurrentHP <= 0)
+                {
+                    IsDead = true;
+                    CurrentHP = 0;
+                }
+
+                if (HPSlider != null)
+                {
+                    HPSlider.value = CurrentHP;
+                }
             }
-        }
 
-        void RunToPlayer(Vector3 offset)
-        {
-            NavMeshAgentInst.SetDestination(Target.position + offset);
-        }
+            void ShootToPosition(Vector3 pos)
+            {
+                // look at target position
+                transform.LookAt(pos + Vector3.up * transform.position.y);
 
-        Vector3 velocity = Vector3.zero;
+                // instantiate bullet
+                if (BulletPrefab)
+                {
+                    GameObject bullet = Instantiate<GameObject>(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
+                    Rigidbody rb = bullet.GetComponent<Rigidbody>();
+                    rb.AddForce(transform.forward * BulletPower);
+                }
+            }
 
-        #endregion
+            void RunToPlayer(Vector3 offset)
+            {
+                NavMeshAgentInst.SetDestination(Target.position + offset);
+            }
+
+            Vector3 velocity = Vector3.zero;
+            #endregion
     }
 }

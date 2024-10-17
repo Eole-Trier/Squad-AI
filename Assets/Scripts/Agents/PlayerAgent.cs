@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerAgent : Agent
 {
-    public GameObject TargetCursorPrefab { get; private set; } = null;
+    [SerializeField] public GameObject TargetCursorPrefab = null;
     public GameObject NPCTargetCursorPrefab { get; private set; } = null;
 
     private GameObject GetTargetCursor()

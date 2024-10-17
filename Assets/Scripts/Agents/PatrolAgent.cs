@@ -11,7 +11,7 @@ public class PatrolAgent : Agent
     [SerializeField] float _shootRange;
 
     private float _idleTime = 0f;
-    private float _shootTime = 0f;
+    private float _shootWaitTimer = 0f;
 
     private FSM _brain;
     private int _pathIndex;
@@ -46,11 +46,6 @@ public class PatrolAgent : Agent
 
     void Update()
     {
-        if (_target && Time.time >= NextShootDate)
-        {
-            NextShootDate = Time.time + _shootFrequency;
-            ShootToPosition(_target.transform.position);
-        }
         _brain.Update();
     }
 
@@ -81,18 +76,19 @@ public class PatrolAgent : Agent
         }
         if (_target)
         {
-            _idleWaitTime = 0;
             _brain.SetState(Chase);
         }
     }
 
     private void Chase()
     {
-        MoveToTarget();
         if (!_target)
         {
             _brain.SetState(Idle);
+            return;
         }
+
+        MoveToTarget();
         if (Vector3.Distance(transform.position, _target.transform.position) <= _shootRange)
         {
             _brain.SetState(Shoot);
@@ -101,22 +97,25 @@ public class PatrolAgent : Agent
 
     private void Shoot()
     {
+        _shootWaitTimer += Time.deltaTime;
+
         if (!_target)
         {
             _brain.SetState(Idle);
             return;
         }
-        if (_shootTime == 0f)
+        if (Time.time >= NextShootDate)
         {
-            StopMove();
+            NextShootDate = Time.time + _shootFrequency;
             ShootToPosition(_target.transform.position);
         }
-        if (_shootTime >= _shootWaitTime)
+        if (_shootWaitTimer < _shootWaitTime)
         {
-            _shootTime = 0;
-            _brain.SetState(Chase);
+            StopMove();
+            return;
         }
-        _shootTime += Time.deltaTime;
+        _shootWaitTimer = 0;
+        _brain.SetState(Chase);
     }
 
     public void MoveToTarget()

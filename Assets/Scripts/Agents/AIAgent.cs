@@ -49,13 +49,11 @@ namespace FSMMono
             
 
             Target = Transform.FindAnyObjectByType<PlayerAgent>().transform;
-
-            //NavMeshAgentInst.updatePosition = false;
-            _player = FindObjectOfType<PlayerAgent>();
+            _player = FindAnyObjectByType<PlayerAgent>();
             _brain = new FSM();
             _brain.SetState(FollowPlayer);
-            
         }
+        
 
         private void Update()
         {

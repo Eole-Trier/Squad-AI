@@ -1720,6 +1720,18 @@ RectTransform:
   m_AnchoredPosition: {x: 80, y: -30}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1681099482 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7625268847179084907, guid: bc971e34c68c5464eb0030aae3827192,
+    type: 3}
+  m_PrefabInstance: {fileID: 908906620395414589}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0267bd5c4d75447bb602839d55c5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1725597665
 GameObject:
   m_ObjectHideFlags: 0
@@ -2743,6 +2755,17 @@ PrefabInstance:
       propertyPath: HPSlider
       value: 
       objectReference: {fileID: 1531951182}
+    - target: {fileID: 8635677475266795154, guid: bc971e34c68c5464eb0030aae3827192,
+        type: 3}
+      propertyPath: _agentData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1f65b26af1a2d0840a06a2a67bf2e582,
+        type: 2}
+    - target: {fileID: 8635677475266795154, guid: bc971e34c68c5464eb0030aae3827192,
+        type: 3}
+      propertyPath: healthComponent
+      value: 
+      objectReference: {fileID: 1681099482}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

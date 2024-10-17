@@ -174,7 +174,7 @@ namespace FSMMono
         {
             RunToPlayer(Vector3.zero);
 
-            if (!HasReachedPos(distanceToHealPlayer))
+            if (!HasReachedPos())
                 return;
             
             _player.healthComponent.SetHp(_player.healthComponent.CurrentHp() + _agentData.healingPoints);

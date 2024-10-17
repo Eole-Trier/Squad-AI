@@ -6,7 +6,12 @@ public class PatrolAgent : Agent
 {
     [SerializeField]  List<GameObject> pathGo;
     [SerializeField]  float _idleWaitTime;
+    [SerializeField]  float _shootWaitTime;
     [SerializeField]  float _shootFrequency = 1f;
+    [SerializeField] float _shootRange;
+
+    private float _idleTime = 0f;
+    private float _shootTime = 0f;
 
     private FSM _brain;
     private int _pathIndex;
@@ -52,16 +57,16 @@ public class PatrolAgent : Agent
     private void Idle()
     {
         StopMove();
-        _idleWaitTime += Time.deltaTime;
+        _idleTime += Time.deltaTime;
 
-        if (_idleWaitTime >= 2f)
+        if (_idleTime >= _idleWaitTime)
         {
-            _idleWaitTime = 0;
+            _idleTime = 0;
             _brain.SetState(Patrol);
         }
         if (_target)
         {
-            _idleWaitTime = 0;
+            _idleTime = 0;
             _brain.SetState(Chase);
         }
     }
@@ -88,6 +93,30 @@ public class PatrolAgent : Agent
         {
             _brain.SetState(Idle);
         }
+        if (Vector3.Distance(transform.position, _target.transform.position) <= _shootRange)
+        {
+            _brain.SetState(Shoot);
+        }
+    }
+
+    private void Shoot()
+    {
+        if (!_target)
+        {
+            _brain.SetState(Idle);
+            return;
+        }
+        if (_shootTime == 0f)
+        {
+            StopMove();
+            ShootToPosition(_target.transform.position);
+        }
+        if (_shootTime >= _shootWaitTime)
+        {
+            _shootTime = 0;
+            _brain.SetState(Chase);
+        }
+        _shootTime += Time.deltaTime;
     }
 
     public void MoveToTarget()

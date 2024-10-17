@@ -36,9 +36,9 @@ public class Agent : MonoBehaviour
         NavMeshAgentInst.isStopped = false;
         NavMeshAgentInst.SetDestination(dest);
     }
-    public bool HasReachedPos(float offset = 0f)
+    public bool HasReachedPos()
     {
-        if (Vector3.Distance(NavMeshAgentInst.destination, NavMeshAgentInst.transform.position) <= NavMeshAgentInst.stoppingDistance)
+        if (Vector3.Distance(NavMeshAgentInst.destination, NavMeshAgentInst.transform.position - new Vector3(0, NavMeshAgentInst.baseOffset, 0)) <= NavMeshAgentInst.stoppingDistance)
         {
             if (!NavMeshAgentInst.hasPath || NavMeshAgentInst.velocity.sqrMagnitude == 0f)
             {
